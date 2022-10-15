@@ -15,7 +15,7 @@ router.get("/fetchallnotes", fetchUser, async (req, res) => {
   }
 });
 
-// Route 2 : Add a new Notes using : POST"/api/notes/addnote". Login required
+// Route 2 : Add a new Note using : POST"/api/notes/addnote". Login required
 router.post(
   "/addnote",
   fetchUser,
@@ -50,42 +50,67 @@ router.post(
   }
 );
 
+// Route 3 : update a Note using : PUT "/api/notes/updatenote/:id". Login required
+router.put("/updatenote/:id", fetchUser, async (req, res) => {
+  const { title, description, tag } = req.body;
+  //create a newnote object
+  try {
+    const newNote = {};
+    if (title) {
+      newNote.title = title;
+    }
+    if (description) {
+      newNote.description = description;
+    }
+    if (tag) {
+      newNote.tag = tag;
+    }
 
-// Route 2 : Add a new Notes using : POST"/api/notes/addnote". Login required
-router.put(
-  "/updatenote/:id",
-  fetchUser,
-  async (req, res) => {
-      const { title, description, tag } = req.body;
-      //create a newnote object
-      const newNote = {};
-      if (title) {
-          newNote.title = title;
-      }
-      if (description) {
-          newNote.description = description;
-      }
-      if (tag) {
-          newNote.tag = tag;
-      }
+    //find the note to be updated and update it after verifying that the user is actually the real user who has written the note.
+    let note = await Notes.findById(req.params.id);
 
-      //find the note to be updated and update it after verifying that the user is actually the real user who has written the note.
-      let note = await Notes.findById(req.params.id);
-      
-      if (!note)
-      {
-          return res.status(404).send("Not Found");
-      }
+    if (!note) {
+      return res.status(404).send("Not Found");
+    }
 
-      if (note.user.toString() !== req.user.id)
-      {
-          return res.status(401).send("Not Allowed")
-      }
+    if (note.user.toString() !== req.user.id) {
+      return res.status(401).send("Not Allowed");
+    }
 
-      note = await Notes.findByIdAndUpdate(req.params.id, { $set: newNote }, { new: true });
+    note = await Notes.findByIdAndUpdate(
+      req.params.id,
+      { $set: newNote },
+      { new: true }
+    );
 
-      res.send(note);
+    res.send(note);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send("internal error occured");
   }
-);
+});
+
+// Route 3 : delete a Note using : DELETE "/api/notes/deletenote/:id". Login required
+router.delete("/deletenote/:id", fetchUser, async (req, res) => {
+  try {
+    //find the note to be deleted and delete it after verifying that the user is actually the real user who has written the note.
+    let note = await Notes.findById(req.params.id);
+
+    if (!note) {
+      return res.status(404).send("Not Found");
+    }
+
+    if (note.user.toString() !== req.user.id) {
+      return res.status(401).send("Not Allowed");
+    }
+
+    note = await Notes.findByIdAndDelete(req.params.id);
+
+    res.send("Success! Your note has been deleted.");
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send("internal error occured");
+  }
+});
 
 module.exports = router;
