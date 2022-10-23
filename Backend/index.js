@@ -1,10 +1,14 @@
 const connectToMongo = require('./db');
 const express = require('express');
+var cors = require('cors')
 
 connectToMongo();
 const app = express()
 const port = 5000
 
+//cors functionality to fix error, after installing cors npm package
+
+app.use(cors())
 //to use req.body through which we can send data we need to include this middleware
 app.use(express.json());
 
