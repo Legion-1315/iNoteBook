@@ -3,7 +3,7 @@ import NoteContext from "./noteContext";
 
 const NoteState = (props) => {
   const host = "http://localhost:5000";
-  const notesInitial = [];
+  let notesInitial = [];
   const [notes, setNotes] = useState(notesInitial);
 
   //Get all Notes
@@ -50,7 +50,7 @@ const NoteState = (props) => {
       body: JSON.stringify({title,description,tag}),
     });
     const json = response.json();
-    // console.log(json);
+    console.log(json);
 
     //Logic to edit the note
     //we cannot change the state directly in react so to update notes we have to amke a new object using this below command
@@ -79,7 +79,7 @@ const NoteState = (props) => {
     },
   });  
     const json = response.json();
-  // console.log(json);  
+  console.log(json);  
     
     // console.log("deletion " + id);
     const newNote = notes.filter((note) => {

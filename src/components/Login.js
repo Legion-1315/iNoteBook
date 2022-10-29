@@ -23,6 +23,7 @@ const Login = () => {
         if (json.success) {
             //save the auth-token and redirect
             localStorage.setItem('token', json.authToken);
+            // localStorage.setItem('token', JSON.stringify(json.authToken));
             alert('Logged in Successfully');
             navigate('/');
         }

@@ -13,7 +13,7 @@ const fetchUser = (req, res, next) =>
         req.user = data.user;
         next();
     } catch (error) {
-        res.status(401).send({ error: "Please authenticate using a valid token1223" });
+        res.status(401).send({ error: {error} });
     }
     
 }
